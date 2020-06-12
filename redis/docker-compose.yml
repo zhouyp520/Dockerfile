@@ -34,3 +34,11 @@ sentinel:
   - redis-slave1
   - redis-slave2   
   - redis-slave3 
+
+haproxy:
+  image: myhaproxy:1.0
+  links:
+  - redis-master
+  - redis-slave1
+  - redis-slave2   
+  - redis-slave3    

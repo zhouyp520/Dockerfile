@@ -1,0 +1,40 @@
+redis-master:
+  image: redis:6.0.4
+  container_name: redis-master
+
+redis-slave:
+  image: redis:6.0.4
+  command: redis-server --replicaof redis-master 6379 --bind 0.0.0.0
+  container_name: redis-slave
+  links:
+  - redis-master
+
+frontend1:
+  image: kubeguide/guestbook-php-frontend:latest
+  container_name: frontend1
+  links:
+  -  redis-master
+  -  redis-slave
+
+frontend2:
+  image: kubeguide/guestbook-php-frontend:latest
+  container_name: frontend2
+  links:
+  -  redis-master
+  -  redis-slave
+
+frontend3:
+  image: kubeguide/guestbook-php-frontend:latest
+  container_name: frontend3
+  links:
+  -  redis-master
+  -  redis-slave
+  
+haproxy:
+  image: myhaproxy
+  links:
+  - frontend1:web1
+  - frontend2:web2
+  - frontend3:web3
+  ports:
+    - "30003:80"
